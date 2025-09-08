@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phép Nhân Ma Trận</title>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: #333;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: rgba(255, 255, 255, 0.95);
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 25px;
+            font-size: 2.5rem;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+        .matrix-input {
+            margin-bottom: 25px;
+            overflow-x: auto;
+        }
+        .matrix-table {
+            border-collapse: collapse;
+            margin: 15px 0;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+            background: white;
+        }
+        .matrix-table input {
+            width: 60px;
+            padding: 8px 5px;
+            text-align: center;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        .matrix-table input:focus {
+            border-color: #4CAF50;
+            outline: none;
+            box-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
+        }
+        .matrix-table td {
+            padding: 8px;
+        }
+        .button {
+            background: linear-gradient(to right, #4CAF50, #2E8B57);
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+            transition: all 0.3s;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(0,0,0,0.15);
+        }
+        .button:active {
+            transform: translateY(0);
+        }
+        .button-random {
+            background: linear-gradient(to right, #2196F3, #1976D2);
+        }
+        .button-clear {
+            background: linear-gradient(to right, #f44336, #d32f2f);
+        }
+        .result {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            border-left: 5px solid #4CAF50;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+        }
+        .matrix-dimensions {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+        .dimension-group {
+            display: flex;
+            align-items: center;
+            margin: 10px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+        .dimension-input {
+            padding: 10px;
+            width: 70px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+            text-align: center;
+            margin: 0 10px;
+        }
+        .instructions {
+            background-color: #e7f3fe;
+            border-left: 5px solid #2196F3;
+            padding: 15px 20px;
+            margin-bottom: 25px;
+            border-radius: 8px;
+        }
+        .matrix-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            justify-content: center;
+            margin: 20px 0;
+        }
+        .matrix-wrapper {
+            text-align: center;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.08);
+            transition: transform 0.3s;
+        }
+        .matrix-wrapper:hover {
+            transform: translateY(-5px);
+        }
+        .button-container {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin: 20px 0;
+        }
+        .error {
+            color: #d32f2f;
+            background-color: #ffebee;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 15px 0;
+            display: none;
+        }
+        @media (max-width: 768px) {
+            .matrix-dimensions {
+                flex-direction: column;
+                align-items: center;
+            }
+            .matrix-container {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Phép Nhân Ma Trận</h1>
+        
+        <div class="instructions">
+            <p><strong>Hướng dẫn:</strong> Nhập kích thước và các phần tử của hai ma trận. Số cột của ma trận A phải bằng số hàng của ma trận B. Bạn có thể tạo ma trận ngẫu nhiên bằng nút "Tạo Ma Trận Ngẫu Nhiên".</p>
+        </div>
+        
+        <div class="matrix-dimensions">
+            <div class="dimension-group">
+                <label>Ma trận A: </label>
+                <input type="number" id="rowsA" class="dimension-input" min="1" max="6" value="2"> ×
+                <input type="number" id="colsA" class="dimension-input" min="1" max="6" value="2">
+            </div>
+            <div class="dimension-group">
+                <label>Ma trận B: </label>
+                <input type="number" id="rowsB" class="dimension-input" min="1" max="6" value="2"> ×
+                <input type="number" id="colsB" class="dimension-input" min="1" max="6" value="2">
+            </div>
+        </div>
+        
+        <div class="button-container">
+            <button class="button" onclick="createMatrixInputs()">Tạo Ma Trận</button>
+            <button class="button button-random" onclick="generateRandomMatrices()">Tạo Ma Trận Ngẫu Nhiên</button>
+            <button class="button button-clear" onclick="clearMatrices()">Xóa Ma Trận</button>
+        </div>
+        
+        <div class="matrix-container">
+            <div class="matrix-wrapper">
+                <h3>Ma trận A</h3>
+                <div id="matrixA" class="matrix-input"></div>
+            </div>
+            
+            <div class="matrix-wrapper">
+                <h3>Ma trận B</h3>
+                <div id="matrixB" class="matrix-input"></div>
+            </div>
+        </div>
+        
+        <div class="button-container">
+            <button class="button" onclick="multiplyMatrices()">Thực hiện phép nhân</button>
+        </div>
+        
+        <div id="error-message" class="error"></div>
+        
+        <div id="result" class="result" style="display: none;">
+            <h3>Kết quả:</h3>
+            <div id="calculationSteps"></div>
+            <div id="matrixResult"></div>
+        </div>
+    </div>
+
+    <script>
+        // Tạo các ô input cho ma trận
+        function createMatrixInputs() {
+            const rowsA = parseInt(document.getElementById('rowsA').value);
+            const colsA = parseInt(document.getElementById('colsA').value);
+            const rowsB = parseInt(document.getElementById('rowsB').value);
+            const colsB = parseInt(document.getElementById('colsB').value);
+            
+            // Kiểm tra tính hợp lệ của kích thước ma trận
+            if (rowsA < 1 || colsA < 1 || rowsB < 1 || colsB < 1) {
+                showError("Kích thước ma trận phải là số nguyên dương");
+                return;
+            }
+            
+            hideError();
+            
+            // Tạo ma trận A
+            let matrixAHTML = '<table class="matrix-table">';
+            for (let i = 0; i < rowsA; i++) {
+                matrixAHTML += '<tr>';
+                for (let j = 0; j < colsA; j++) {
+                    matrixAHTML += `<td><input type="number" id="A-${i}-${j}" value="0"></td>`;
+                }
+                matrixAHTML += '</tr>';
+            }
+            matrixAHTML += '</table>';
+            document.getElementById('matrixA').innerHTML = matrixAHTML;
+            
+            // Tạo ma trận B
+            let matrixBHTML = '<table class="matrix-table">';
+            for (let i = 0; i < rowsB; i++) {
+                matrixBHTML += '<tr>';
+                for (let j = 0; j < colsB; j++) {
+                    matrixBHTML += `<td><input type="number" id="B-${i}-${j}" value="0"></td>`;
+                }
+                matrixBHTML += '</tr>';
+            }
+            matrixBHTML += '</table>';
+            document.getElementById('matrixB').innerHTML = matrixBHTML;
+        }
+        
+        // Tạo ma trận ngẫu nhiên
+        function generateRandomMatrices() {
+            createMatrixInputs();
+            
+            const rowsA = parseInt(document.getElementById('rowsA').value);
+            const colsA = parseInt(document.getElementById('colsA').value);
+            const rowsB = parseInt(document.getElementById('rowsB').value);
+            const colsB = parseInt(document.getElementById('colsB').value);
+            
+            // Điền giá trị ngẫu nhiên cho ma trận A (-9 đến 9)
+            for (let i = 0; i < rowsA; i++) {
+                for (let j = 0; j < colsA; j++) {
+                    const randomValue = Math.floor(Math.random() * 19) - 9; // -9 đến 9
+                    document.getElementById(`A-${i}-${j}`).value = randomValue;
+                }
+            }
+            
+            // Điền giá trị ngẫu nhiên cho ma trận B (-9 đến 9)
+            for (let i = 0; i < rowsB; i++) {
+                for (let j = 0; j < colsB; j++) {
+                    const randomValue = Math.floor(Math.random() * 19) - 9; // -9 đến 9
+                    document.getElementById(`B-${i}-${j}`).value = randomValue;
+                }
+            }
+        }
+        
+        // Xóa ma trận
+        function clearMatrices() {
+            document.getElementById('matrixA').innerHTML = '';
+            document.getElementById('matrixB').innerHTML = '';
+            hideResult();
+            hideError();
+        }
+        
+        // Hiển thị lỗi
+        function showError(message) {
+            const errorDiv = document.getElementById('error-message');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+        }
+        
+        // Ẩn lỗi
+        function hideError() {
+            document.getElementById('error-message').style.display = 'none';
+        }
+        
+        // Ẩn kết quả
+        function hideResult() {
+            document.getElementById('result').style.display = 'none';
+        }
+        
+        // Lấy giá trị từ các ô input và tạo ma trận
+        function getMatrix(matrixId, rows, cols) {
+            const matrix = [];
+            for (let i = 0; i < rows; i++) {
+                matrix[i] = [];
+                for (let j = 0; j < cols; j++) {
+                    const value = parseFloat(document.getElementById(`${matrixId}-${i}-${j}`).value) || 0;
+                    matrix[i][j] = value;
+                }
+            }
+            return matrix;
+        }
+        
+        // Hiển thị ma trận dưới dạng LaTeX
+        function matrixToLatex(matrix, matrixName) {
+            let latex = `\\begin{bmatrix}`;
+            for (let i = 0; i < matrix.length; i++) {
+                for (let j = 0; j < matrix[i].length; j++) {
+                    latex += matrix[i][j];
+                    if (j < matrix[i].length - 1) {
+                        latex += ' & ';
+                    }
+                }
+                if (i < matrix.length - 1) {
+                    latex += ' \\\\ ';
+                }
+            }
+            latex += `\\end{bmatrix}`;
+            
+            if (matrixName) {
+                latex = matrixName + ' = ' + latex;
+            }
+            
+            return latex;
+        }
+        
+        // Thực hiện phép nhân ma trận
+        function multiplyMatrices() {
+            const rowsA = parseInt(document.getElementById('rowsA').value);
+            const colsA = parseInt(document.getElementById('colsA').value);
+            const rowsB = parseInt(document.getElementById('rowsB').value);
+            const colsB = parseInt(document.getElementById('colsB').value);
+            
+            // Kiểm tra điều kiện nhân ma trận
+            if (colsA !== rowsB) {
+                showError("Số cột của ma trận A phải bằng số hàng của ma trận B!");
+                return;
+            }
+            
+            hideError();
+            
+            const matrixA = getMatrix('A', rowsA, colsA);
+            const matrixB = getMatrix('B', rowsB, colsB);
+            
+            // Khởi tạo ma trận kết quả
+            const resultMatrix = [];
+            for (let i = 0; i < rowsA; i++) {
+                resultMatrix[i] = [];
+                for (let j = 0; j < colsB; j++) {
+                    resultMatrix[i][j] = 0;
+                }
+            }
+            
+            // Thực hiện phép nhân
+            for (let i = 0; i < rowsA; i++) {
+                for (let j = 0; j < colsB; j++) {
+                    for (let k = 0; k < colsA; k++) {
+                        resultMatrix[i][j] += matrixA[i][k] * matrixB[k][j];
+                    }
+                }
+            }
+            
+            // Hiển thị kết quả
+            displayResult(matrixA, matrixB, resultMatrix);
+        }
+        
+        // Hiển thị kết quả và các bước tính toán
+        function displayResult(matrixA, matrixB, resultMatrix) {
+            const resultDiv = document.getElementById('result');
+            resultDiv.style.display = 'block';
+            
+            // Hiển thị công thức toán học
+            let latexCode = `\\(${matrixToLatex(matrixA, 'A')} \\times ${matrixToLatex(matrixB, 'B')} = ${matrixToLatex(resultMatrix, 'C')}\\)`;
+            document.getElementById('calculationSteps').innerHTML = latexCode;
+            
+            // Hiển thị ma trận kết quả dưới dạng bảng
+            let resultHTML = '<h4>Ma trận kết quả:</h4><table class="matrix-table">';
+            for (let i = 0; i < resultMatrix.length; i++) {
+                resultHTML += '<tr>';
+                for (let j = 0; j < resultMatrix[i].length; j++) {
+                    resultHTML += `<td style="padding: 12px; border: 2px solid #4CAF50; background-color: #e8f5e9; font-weight: bold;">${resultMatrix[i][j]}</td>`;
+                }
+                resultHTML += '</tr>';
+            }
+            resultHTML += '</table>';
+            document.getElementById('matrixResult').innerHTML = resultHTML;
+            
+            // Render lại MathJax để hiển thị công thức toán
+            MathJax.typeset();
+        }
+        
+        // Khởi tạo ma trận khi trang được tải
+        window.onload = createMatrixInputs;
+    </script>
+</body>
+</html>
